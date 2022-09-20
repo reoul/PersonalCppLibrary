@@ -8,18 +8,33 @@
 #define LOGGER_FOLDER_NAME "Logger"
 #endif
 
+#ifdef NDEBUG
+
+#define log_assert(expression) ((void)0)
+
+#else
 
 #define log_assert(expression) (void)(																						\
             (!!(expression)) || _assertion_log_error_write(#expression, __FILE__, (unsigned)(__LINE__)) ||	\
             (_wassert(_CRT_WIDE(#expression), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)), 0)								\
         )
 
+#endif
+
 inline void LogInit()
 {
 	std::shared_ptr<spdlog::logger> consoleLogger = spdlog::stdout_color_mt("console");
-	std::shared_ptr<spdlog::logger> fileLogger = spdlog::rotating_logger_mt("log", LOGGER_FOLDER_NAME "/log.txt", 3 * 1024 * 1024, 100);
-	std::shared_ptr<spdlog::logger> testLogger = spdlog::rotating_logger_mt("test", LOGGER_FOLDER_NAME "/testLog.txt", 3 * 1024 * 1024, 100);
+	std::shared_ptr<spdlog::logger> fileLogger = spdlog::rotating_logger_mt("log", LOGGER_FOLDER_NAME "/log.txt", 30 * 1024 * 1024, 100);
+	std::shared_ptr<spdlog::logger> testLogger = spdlog::rotating_logger_mt("test", LOGGER_FOLDER_NAME "/testLog.txt", 30 * 1024 * 1024, 100);
 }
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+inline void LogWrite(const char* format, Arguments... args)
+{}
+
+#else
 
 template<typename ... Arguments>
 inline void LogWrite(const char* format, Arguments... args)
@@ -29,6 +44,16 @@ inline void LogWrite(const char* format, Arguments... args)
 	logger->flush();
 }
 
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+inline void LogWriteTest(const char* format, Arguments... args)
+{}
+
+#else
+
 template<typename ... Arguments>
 inline void LogWriteTest(const char* format, Arguments... args)
 {
@@ -36,6 +61,16 @@ inline void LogWriteTest(const char* format, Arguments... args)
 	logger->info(format, args...);
 	logger->flush();
 }
+
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+inline void LogWriteWarning(const char* format, Arguments... args)
+{}
+
+#else
 
 template<typename ... Arguments>
 inline void LogWriteWarning(const char* format, Arguments... args)
@@ -45,6 +80,16 @@ inline void LogWriteWarning(const char* format, Arguments... args)
 	logger->flush();
 }
 
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+inline void LogWriteError(const char* format, Arguments... args)
+{}
+
+#else
+
 template<typename ... Arguments>
 inline void LogWriteError(const char* format, Arguments... args)
 {
@@ -53,17 +98,46 @@ inline void LogWriteError(const char* format, Arguments... args)
 	logger->flush();
 }
 
+#endif
+
+#ifdef NDEBUG
+
+inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
+{}
+
+#else
+
 inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
 {
 	LogWriteError("Assertion failed: {0}, {1}, line {2}", message, file, line);
 	return false;
 }
 
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+void LogPrintf(const char* format, Arguments... args)
+{}
+
+#else
+
 template<typename ... Arguments>
 void LogPrintf(const char* format, Arguments... args)
 {
 	spdlog::get("console")->info(format, args...);
 }
+
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+void Log(const char* format, Arguments... args)
+{}
+
+#else
 
 template<typename ... Arguments>
 void Log(const char* format, Arguments... args)
@@ -72,9 +146,21 @@ void Log(const char* format, Arguments... args)
 	LogWrite(format, args...);
 }
 
+#endif
+
+#ifdef NDEBUG
+
+template<typename ... Arguments>
+void LogWarning(const char* format, Arguments... args)
+{}
+
+#else
+
 template<typename ... Arguments>
 void LogWarning(const char* format, Arguments... args)
 {
 	spdlog::get("console")->warn(format, args...);
 	LogWriteWarning(format, args...);
 }
+
+#endif
