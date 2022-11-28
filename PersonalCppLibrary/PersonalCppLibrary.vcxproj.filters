@@ -24,10 +24,10 @@
     <ClInclude Include="..\Include\reoul\functional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="logger.h">
+    <ClInclude Include="..\include\reoul\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryStream.h">
+    <ClInclude Include="..\include\reoul\MemoryStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

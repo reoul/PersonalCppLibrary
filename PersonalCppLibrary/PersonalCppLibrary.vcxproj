@@ -154,9 +154,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\reoul\functional.h" />
+    <ClInclude Include="..\include\reoul\logger.h" />
+    <ClInclude Include="..\include\reoul\MemoryStream.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="logger.h" />
-    <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

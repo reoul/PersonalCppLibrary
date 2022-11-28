@@ -3,6 +3,10 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/daily_file_sink.h>
+
+namespace Logger
+{
 
 #ifndef LOGGER_FOLDER_NAME
 #define LOGGER_FOLDER_NAME "Logger"
@@ -21,146 +25,163 @@
 
 #endif
 
-inline void LogInit()
-{
-	std::shared_ptr<spdlog::logger> consoleLogger = spdlog::stdout_color_mt("console");
-	std::shared_ptr<spdlog::logger> fileLogger = spdlog::rotating_logger_mt("log", LOGGER_FOLDER_NAME "/log.txt", 30 * 1024 * 1024, 100);
-	std::shared_ptr<spdlog::logger> testLogger = spdlog::rotating_logger_mt("test", LOGGER_FOLDER_NAME "/testLog.txt", 30 * 1024 * 1024, 100);
-}
+	inline void LogInit()
+	{
+		std::shared_ptr<spdlog::logger> consoleLogger = spdlog::stdout_color_mt("console");
+	}
+
+	inline void AddLogger(const std::string& loggerName, const std::string& fileName)
+	{
+		std::shared_ptr<spdlog::logger> logger = spdlog::daily_logger_mt(loggerName, LOGGER_FOLDER_NAME + fileName, 0, 0);
+	}
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-inline void LogWrite(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	inline void LogWrite(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-inline void LogWrite(const char* format, Arguments... args)
-{
-	const auto logger = spdlog::get("log");
-	logger->info(format, args...);
-	logger->flush();
-}
+	template<typename ... Arguments>
+	inline void LogWrite(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		const auto logger = spdlog::get(loggerName);
+		if (logger)
+		{
+			logger->info(format, args...);
+			logger->flush();
+		}
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-inline void LogWriteTest(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	inline void LogWriteTest(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-inline void LogWriteTest(const char* format, Arguments... args)
-{
-	const auto logger = spdlog::get("test");
-	logger->info(format, args...);
-	logger->flush();
-}
+	template<typename ... Arguments>
+	inline void LogWriteTest(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		const auto logger = spdlog::get(loggerName);
+		if (logger)
+		{
+			logger->info(format, args...);
+			logger->flush();
+		}
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-inline void LogWriteWarning(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	inline void LogWriteWarning(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-inline void LogWriteWarning(const char* format, Arguments... args)
-{
-	const auto logger = spdlog::get("log");
-	logger->warn(format, args...);
-	logger->flush();
-}
+	template<typename ... Arguments>
+	inline void LogWriteWarning(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		const auto logger = spdlog::get(loggerName);
+		if (logger)
+		{
+			logger->warn(format, args...);
+			logger->flush();
+		}
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-inline void LogWriteError(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	inline void LogWriteError(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-inline void LogWriteError(const char* format, Arguments... args)
-{
-	const auto logger = spdlog::get("log");
-	logger->error(format, args...);
-	logger->flush();
-}
+	template<typename ... Arguments>
+	inline void LogWriteError(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		const auto logger = spdlog::get(loggerName);
+		if (logger)
+		{
+			logger->error(format, args...);
+			logger->flush();
+		}
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
-{}
+	inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
+	{}
 
 #else
 
-inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
-{
-	LogWriteError("Assertion failed: {0}, {1}, line {2}", message, file, line);
-	return false;
-}
+	inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
+	{
+		LogWriteError("Assertion failed: {0}, {1}, line {2}", message, file, line);
+		return false;
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-void LogPrintf(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	void LogPrintf(const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-void LogPrintf(const char* format, Arguments... args)
-{
-	spdlog::get("console")->info(format, args...);
-}
+	template<typename ... Arguments>
+	void LogPrintf(const char* format, Arguments... args)
+	{
+		spdlog::get("console")->info(format, args...);
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-void Log(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	void Log(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-void Log(const char* format, Arguments... args)
-{
-	spdlog::get("console")->info(format, args...);
-	LogWrite(format, args...);
-}
+	template<typename ... Arguments>
+	void Log(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		spdlog::get("console")->info(format, args...);
+		LogWrite(loggerName, format, args...);
+	}
 
 #endif
 
 #ifdef NDEBUG
 
-template<typename ... Arguments>
-void LogWarning(const char* format, Arguments... args)
-{}
+	template<typename ... Arguments>
+	void LogWarning(const std::string& loggerName, const char* format, Arguments... args)
+	{}
 
 #else
 
-template<typename ... Arguments>
-void LogWarning(const char* format, Arguments... args)
-{
-	spdlog::get("console")->warn(format, args...);
-	LogWriteWarning(format, args...);
-}
+	template<typename ... Arguments>
+	void LogWarning(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		spdlog::get("console")->warn(format, args...);
+		LogWriteWarning(loggerName, format, args...);
+	}
 
 #endif
+
+}

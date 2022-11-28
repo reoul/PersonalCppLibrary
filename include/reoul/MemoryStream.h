@@ -1,6 +1,23 @@
 ﻿#pragma once
 #include <string>
 
+class WriteMemoryStream;
+class ReadMemoryStream;
+
+class IConvertToBytes
+{
+public:
+	virtual ~IConvertToBytes() = default;
+	virtual void ToBytes(WriteMemoryStream& writeStream) = 0;
+};
+
+class IConvertToData
+{
+public:
+	virtual ~IConvertToData() = default;
+	virtual void ToData(ReadMemoryStream& readStream) = 0;
+};
+
 class WriteMemoryStream
 {
 public:
