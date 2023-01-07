@@ -5,24 +5,24 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
+//#define AA
+
+#ifdef AA
+#define SHOW_LOG 1
+#else
+
+#endif // SHOW_LOG
+
+
+
+
+
+
 namespace Logger
 {
 
 #ifndef LOGGER_FOLDER_NAME
 #define LOGGER_FOLDER_NAME "Logger"
-#endif
-
-#ifdef NDEBUG
-
-#define log_assert(expression) ((void)0)
-
-#else
-
-#define log_assert(expression) (void)(																						\
-            (!!(expression)) || _assertion_log_error_write(#expression, __FILE__, (unsigned)(__LINE__)) ||	\
-            (_wassert(_CRT_WIDE(#expression), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)), 0)								\
-        )
-
 #endif
 
 	inline void LogInit()
@@ -35,7 +35,7 @@ namespace Logger
 		std::shared_ptr<spdlog::logger> logger = spdlog::daily_logger_mt(loggerName, LOGGER_FOLDER_NAME + fileName, 0, 0);
 	}
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	inline void LogWrite(const std::string& loggerName, const char* format, Arguments... args)
@@ -56,7 +56,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteTest(const std::string& loggerName, const char* format, Arguments... args)
@@ -77,7 +77,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteWarning(const std::string& loggerName, const char* format, Arguments... args)
@@ -98,7 +98,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteError(const std::string& loggerName, const char* format, Arguments... args)
@@ -119,7 +119,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
 	{}
@@ -134,7 +134,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	void LogPrintf(const char* format, Arguments... args)
@@ -150,7 +150,7 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	void Log(const std::string& loggerName, const char* format, Arguments... args)
@@ -167,7 +167,14 @@ namespace Logger
 
 #endif
 
-#ifdef NDEBUG
+	template<typename ... Arguments>
+	void LogByRelease(const std::string& loggerName, const char* format, Arguments... args)
+	{
+		spdlog::get("console")->info(format, args...);
+		LogWrite(loggerName, format, args...);
+	}
+
+#ifdef SHOW_LOG
 
 	template<typename ... Arguments>
 	void LogWarning(const std::string& loggerName, const char* format, Arguments... args)
@@ -181,6 +188,19 @@ namespace Logger
 		spdlog::get("console")->warn(format, args...);
 		LogWriteWarning(loggerName, format, args...);
 	}
+
+#endif
+
+#ifdef SHOW_LOG
+
+#define log_assert(expression) ((void)0)
+
+#else
+#define log_assert(expression) ((void)0)
+//#define log_assert(expression) (void)(																						\
+//            (!!(expression)) || _assertion_log_error_write(#expression, __FILE__, (unsigned)(__LINE__)) ||	\
+//            (_wassert(_CRT_WIDE(#expression), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)), 0)								\
+//        )
 
 #endif
 
