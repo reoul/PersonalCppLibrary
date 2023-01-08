@@ -5,18 +5,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
-//#define AA
-
-#ifdef AA
-#define SHOW_LOG 1
-#else
-
-#endif // SHOW_LOG
-
-
-
-
-
+#define HIDE_LOG 1
 
 namespace Logger
 {
@@ -35,7 +24,7 @@ namespace Logger
 		std::shared_ptr<spdlog::logger> logger = spdlog::daily_logger_mt(loggerName, LOGGER_FOLDER_NAME + fileName, 0, 0);
 	}
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	inline void LogWrite(const std::string& loggerName, const char* format, Arguments... args)
@@ -56,7 +45,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteTest(const std::string& loggerName, const char* format, Arguments... args)
@@ -77,7 +66,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteWarning(const std::string& loggerName, const char* format, Arguments... args)
@@ -98,7 +87,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	inline void LogWriteError(const std::string& loggerName, const char* format, Arguments... args)
@@ -119,7 +108,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	inline bool _assertion_log_error_write(const char* message, const char* file, unsigned int line)
 	{}
@@ -134,7 +123,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	void LogPrintf(const char* format, Arguments... args)
@@ -150,7 +139,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	void Log(const std::string& loggerName, const char* format, Arguments... args)
@@ -174,7 +163,7 @@ namespace Logger
 		LogWrite(loggerName, format, args...);
 	}
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 	template<typename ... Arguments>
 	void LogWarning(const std::string& loggerName, const char* format, Arguments... args)
@@ -191,7 +180,7 @@ namespace Logger
 
 #endif
 
-#ifdef SHOW_LOG
+#ifdef HIDE_LOG
 
 #define log_assert(expression) ((void)0)
 
