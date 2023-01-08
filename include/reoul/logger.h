@@ -160,7 +160,12 @@ namespace Logger
 	void LogByRelease(const std::string& loggerName, const char* format, Arguments... args)
 	{
 		spdlog::get("console")->info(format, args...);
-		LogWrite(loggerName, format, args...);
+		const auto logger = spdlog::get(loggerName);
+		if (logger)
+		{
+			logger->info(format, args...);
+			logger->flush();
+		}
 	}
 
 #ifdef HIDE_LOG
