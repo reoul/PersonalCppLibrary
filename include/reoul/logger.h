@@ -5,7 +5,7 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
-#define HIDE_LOG 1
+#define HIDE_LOG
 
 namespace Logger
 {
